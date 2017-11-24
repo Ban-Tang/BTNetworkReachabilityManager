@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Reachability.h"
+#import <Reachability/Reachability.h>
 
 typedef NS_ENUM(NSInteger, BTNetworkReachabilityStatus) {
     BTNetworkReachabilityStatusNotReachable     = 0,
