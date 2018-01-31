@@ -10,9 +10,10 @@
 #import <Reachability/Reachability.h>
 
 typedef NS_ENUM(NSInteger, BTNetworkReachabilityStatus) {
-    BTNetworkReachabilityStatusNotReachable     = 0,
-    BTNetworkReachabilityStatusReachableViaWWAN = 1,
-    BTNetworkReachabilityStatusReachableViaWiFi = 2,
+    BTNetworkReachabilityStatusUnknow           = 0,
+    BTNetworkReachabilityStatusNotReachable     = 1,
+    BTNetworkReachabilityStatusReachableViaWWAN = 2,
+    BTNetworkReachabilityStatusReachableViaWiFi = 3,
 };
 
 typedef NS_ENUM(NSInteger, BTNetworkReachabilityOption) {

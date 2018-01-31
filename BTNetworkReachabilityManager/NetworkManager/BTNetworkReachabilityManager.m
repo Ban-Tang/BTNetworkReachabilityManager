@@ -48,6 +48,7 @@ static char kNetworkObserverProxy;
 @interface BTNetworkReachabilityManager () {
     NSMapTable *_networkObserversMap;
 }
+@property (nonatomic, readwrite, assign) BTNetworkReachabilityStatus networkReachabilityStatus;
 @property (nonatomic, copy) void(^networkReachabilityStatusBlock)(BTNetworkReachabilityStatus status);
 
 @end
@@ -91,10 +92,18 @@ NSString *NetworkObserverMapKey(BTNetworkReachabilityObserver *observer) {
 }
 
 + (instancetype)managerForAddress:(const void *)address {
-    BTNetworkReachabilityManager *manager = [self new];
-    manager->_reachability = [Reachability reachabilityWithAddress:(const struct sockaddr_in *)address];
-    [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(networkStatusChanged:) name:kReachabilityChangedNotification object:nil];
+    BTNetworkReachabilityManager *manager = [[BTNetworkReachabilityManager alloc] initWithReachability:[Reachability reachabilityWithAddress:(const struct sockaddr_in *)address]];
     return manager;
+}
+
+- (instancetype)initWithReachability:(Reachability *)reachability {
+    self = [super init];
+    if (self) {
+        self.networkReachabilityStatus = BTNetworkReachabilityStatusUnknow;
+        _reachability = reachability;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChanged:) name:kReachabilityChangedNotification object:nil];
+    }
+    return self;
 }
 
 - (NSMapTable *)lazyNetworkObserversMap {
@@ -191,6 +200,7 @@ NSString *NetworkObserverMapKey(BTNetworkReachabilityObserver *observer) {
     if (reachability != _reachability) return;
     
     BTNetworkReachabilityStatus status = BTTransformedNetworkStatus(reachability.currentReachabilityStatus);
+    self.networkReachabilityStatus = status;
     
     if (_networkReachabilityStatusBlock) {
         _networkReachabilityStatusBlock(status);
